@@ -38,14 +38,22 @@ namespace WeightedGraph
             return edge1.weight > edge2.weight;
         }
 
+        /// <summary>
+        /// Used to compare in reverse order - from biggest, to smallest.
+        /// </summary>
         public int CompareTo(EdgeInfo otherEdge)
         {
-            return this.Weight.CompareTo(otherEdge.Weight);
+            return -this.Weight.CompareTo(otherEdge.Weight);
         }
 
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.GetHashCode();
         }
 
         public int Vertex1
