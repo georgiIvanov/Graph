@@ -132,7 +132,7 @@ namespace WeightedGraph
                 }
             }
 
-            return PrintResult(sourceVertex, current, previous);
+            return GetResult(sourceVertex, current, previous);
         }
 
         public string FindShortestPath(int sourceVertex, int targetVertex)
@@ -193,47 +193,47 @@ namespace WeightedGraph
             }
         }
 
-        private void InitializeVariablesForSearch(int sourceVertex, int n, int[] d, int[] pred, int[] V)
+        private void InitializeVariablesForSearch(int sourceVertex, int n, int[] current, int[] previous, int[] passed)
         {
             for (int i = 0; i < n; i++)
             {
                 if (adjacencyMatrix[sourceVertex, i] == 0)
                 {
-                    d[i] = int.MaxValue;
-                    pred[i] = -1;
+                    current[i] = int.MaxValue;
+                    previous[i] = -1;
                 }
                 else
                 {
-                    d[i] = adjacencyMatrix[sourceVertex, i];
-                    pred[i] = sourceVertex;
+                    current[i] = adjacencyMatrix[sourceVertex, i];
+                    previous[i] = sourceVertex;
                 }
             }
 
             for (int i = 0; i < n; i++)
             {
-                V[i] = 1;
+                passed[i] = 1;
             }
-            V[sourceVertex] = 0;
-            pred[sourceVertex] = -1;
+            passed[sourceVertex] = 0;
+            previous[sourceVertex] = -1;
         }
 
-        void PrintPath(int s, int j, int[] pred)
+        void AppendPath(int s, int j, int[] previous)
         {
-            if (pred[j] != s)
+            if (previous[j] != s)
             {
-                PrintPath(s, pred[j], pred);
+                AppendPath(s, previous[j], previous);
             }
 
             searchResult.AppendFormat("{0} ", vertices[j].Node);
         }
 
-        string PrintResult(int s, int[] d, int[] pred)
+        string GetResult(int s, int[] current, int[] previous)
         {
             for (int i = 0; i < 10; i++)
             {
                 if (i != s)
                 {
-                    if (d[i] == int.MaxValue)
+                    if (current[i] == int.MaxValue)
                     {
                         searchResult.AppendFormat("No path between vertices {0} and {1}\n", vertices[s].Node, vertices[i].Node);
                     }
@@ -241,8 +241,8 @@ namespace WeightedGraph
                     {
                         searchResult.AppendFormat("Minimal path between vertices {0} and {1}: {2} ",
                             vertices[s].Node, vertices[i].Node, vertices[s].Node);
-                        PrintPath(s, i, pred);
-                        searchResult.AppendFormat(", length of path: {0}\n", d[i]);
+                        AppendPath(s, i, previous);
+                        searchResult.AppendFormat(", length of path: {0}\n", current[i]);
                     }
                 }
             }
@@ -251,7 +251,7 @@ namespace WeightedGraph
             return result.TrimEnd();
         }
 
-        string PrintResultForTarget(int s, int[] d, int[] pred, int targetVertex)
+        string PrintResultForTarget(int s, int[] current, int[] previous, int targetVertex)
         {
             for (int i = 0; i < 10; i++)
             {
@@ -259,7 +259,7 @@ namespace WeightedGraph
                 {
                     if(i == targetVertex)
                     {
-                        if (d[i] == int.MaxValue)
+                        if (current[i] == int.MaxValue)
                         {
                             searchResult.AppendFormat("No path between vertices {0} and {1}\n", 
                                 vertices[s].Node, vertices[i].Node);
@@ -269,8 +269,8 @@ namespace WeightedGraph
                         }
                         searchResult.AppendFormat("Minimal path between vertices {0} and {1}: {2} ",
                             vertices[s].Node, vertices[i].Node, vertices[s].Node);
-                        PrintPath(s, i, pred);
-                        searchResult.AppendFormat(", length of path: {0}\n", d[i]);
+                        AppendPath(s, i, previous);
+                        searchResult.AppendFormat(", length of path: {0}\n", current[i]);
                         break;
                     }
                 }
